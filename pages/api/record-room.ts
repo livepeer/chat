@@ -7,11 +7,13 @@ export default async function handler(
 ) {
   try {
     if (req.method === "POST") {
-      console.log(req.body);
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_LP_HOST}/api/room/${req.body.roomId}/egress`,
+      const { roomId } = req.body;
+      console.log(roomId);
+      const stream = await axios.post(
+        `${process.env.NEXT_PUBLIC_LP_HOST}/api/stream`,
         {
-          streamId: req.body.streamId,
+          name: roomId,
+          record: true,
         },
         {
           headers: {
@@ -21,8 +23,22 @@ export default async function handler(
         }
       );
 
-      const data = response.data;
+      console.log(stream.data.id);
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_LP_HOST}/api/room/${req.body.roomId}/egress`,
+        {
+          streamId: stream.data.id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_LP_AUTH}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
+      console.log(response.data);
+      const data = response.data;
       res.status(200).json(data);
     } else {
       res.status(405).json({ message: "Method Not Allowed" });
