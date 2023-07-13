@@ -10,6 +10,7 @@ export default function Navbar() {
   const [showOptions, setShowOptions] = useState<boolean>(false);
   const [streamId, setStreamId] = useState<string>();
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [isCopied, setIsCopied] = useState<boolean>(false);
 
   const { query } = useRouter();
 
@@ -38,6 +39,16 @@ export default function Navbar() {
       });
   };
 
+  const copyMeetingLink = () => {
+    const link = `https://livepeer.chat/room/${query.roomId}`;
+    navigator.clipboard.writeText(link).then(() => {
+      setIsCopied(true);
+      setTimeout(() => {
+        setIsCopied(false);
+      }, 2000);
+    });
+  };
+
   return (
     <header className="border-[#292B38] border-b ">
       <nav className="flex px-8 items-center justify-between h-16">
@@ -63,7 +74,7 @@ export default function Navbar() {
           <div className="text-sm text-gray-200">
             <p
               onClick={() => startRoomEgress({ record: true })}
-              className="px-4 py-3 border-b border-gray-700 hover:bg-gray-700"
+              className="px-4 py-3 border-b border-gray-700 hover:bg-gray-700 cursor-pointer"
             >
               {isRecording ? "Recording in progress..." : "Record Meeting"}
             </p>
@@ -72,11 +83,17 @@ export default function Navbar() {
                 setShowModal(true);
                 toggleOptionsDropdown();
               }}
-              className="px-4 py-3 hover:bg-gray-700"
+              className="px-4 py-3 hover:bg-gray-700 cursor-pointer border-b border-gray-700"
             >
               {isBroadcasting
                 ? "Broadcasting in progress..."
                 : "Broadcast meeting"}
+            </p>
+            <p
+              onClick={copyMeetingLink}
+              className="px-4 py-3 hover:bg-gray-700 cursor-pointer"
+            >
+              {isCopied ? "Copied to Clipboard " : "Copy Meeting Link"}
             </p>
           </div>
         </div>
