@@ -89,3 +89,7 @@ body {
 .lk-list {
   overflow: scroll !important;
 }
+
+[data-lk-theme] .lk-list {
+  overflow: scroll !important;
+}
